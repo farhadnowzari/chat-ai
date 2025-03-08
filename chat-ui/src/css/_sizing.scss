@@ -1,0 +1,17 @@
+$sizes: (
+  '3xs': 299px,
+  '2xs': 399px,
+  'xs': $breakpoint-xs,
+  'sm': $breakpoint-sm,
+  'md': $breakpoint-md,
+  'lg': $breakpoint-lg,
+  'xl': 2119px,
+  '2xl': 2399px,
+  '3xl': 2759px,
+);
+
+@each $size, $value in $sizes {
+  .mw-#{$size} {
+    max-width: $value !important;
+  }
+}
