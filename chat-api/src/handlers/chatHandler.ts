@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import HttpContext from "../contexts/HttpContext";
+import ollama from 'ollama';
 
 const prisma = new PrismaClient();
 
@@ -12,10 +13,21 @@ const handleChat = async (httpContext: HttpContext<Chat>): Promise<void> => {
         }
     })
     httpContext.openStream();
-    const message = "Hello, World!";
-    for(let char of message) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        httpContext.response.write(char);
+    
+    const response = await ollama.chat({
+        model: 'llama3.2:3b',
+        messages: [
+            {
+                role: 'user',
+                content: httpContext.payload.message
+            }
+        ],
+        stream: true
+    })
+
+    for await (let chunk of response) {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        httpContext.response.write(chunk.message.content);
     }
     httpContext.endStream();
 }
